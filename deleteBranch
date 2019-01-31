@@ -3,25 +3,42 @@
 import sys
 import os
 
+argumentList = sys.argv[1:]
 output = os.popen('git branch -vv').readlines()
 newDict = {}
 
-for idx, val in enumerate(output):
-    splitted = val.split()
-    if splitted[0] == '*':
-	newDict.update({ str(idx + 1):splitted[0] + splitted[1] })
-    else:
-	newDict.update({ str(idx + 1):" " + splitted[0] })
-print("Markus")
-listKeys = newDict.keys()
-listKeys.sort()
+def check_match():
+    newDictSet = set(newDict.values())
+    for val in argumentList:
+        if "*" + val in newDictSet or " " + val in newDictSet:
+            os.system("git branch -D " + val)
 
-for idx, key in enumerate(listKeys):
-    print(key + ":" + newDict.get(key))
-    if idx == len(newDict) - 1:
-	print("\n")
+def delete():
+    listKeys = newDict.keys()
+    listKeys.sort()
+    for key in listKeys:
+        print(str(key) + ":" + newDict.get(key))
+	if key == len(newDict):
+	    print("\n")
 
-userInput = raw_input("Which branch do you want to delete? ")
-branchToDelete = newDict.get(userInput)
+    userInput = raw_input("Which branch/branches do you want to delete? ")
+    branchesToDelete = userInput.split()
 
-os.system("git branch -D " + branchToDelete[1:])
+    for val in branchesToDelete:
+        branchToDelete = newDict.get(int(val))
+        os.system("git branch -D " + branchToDelete[1:])   
+
+def create_map():
+    for idx, val in enumerate(output):
+        splitted = val.split()
+        if splitted[0] == '*':
+	    newDict.update({ idx + 1:splitted[0] + splitted[1] })
+        else:
+	    newDict.update({ idx + 1:" " + splitted[0] })
+
+create_map()
+
+if len(argumentList) > 0:
+    check_match()
+else:
+    delete()
