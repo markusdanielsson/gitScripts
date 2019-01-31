@@ -1,0 +1,27 @@
+#!/usr/bin/python
+
+import sys
+import os
+
+output = os.popen('git branch -vv').readlines()
+newDict = {}
+
+for idx, val in enumerate(output):
+    splitted = val.split()
+    if splitted[0] == '*':
+	newDict.update({ str(idx + 1):splitted[0] + splitted[1] })
+    else:
+	newDict.update({ str(idx + 1):" " + splitted[0] })
+print("hello")
+listKeys = newDict.keys()
+listKeys.sort()
+
+for idx, key in enumerate(listKeys):
+    print(key + ":" + newDict.get(key))
+    if idx == len(newDict) - 1:
+	print("\n")
+
+userInput = raw_input("Which branch do you want to delete? ")
+branchToDelete = newDict.get(userInput)
+
+os.system("git branch -D " + branchToDelete[1:])

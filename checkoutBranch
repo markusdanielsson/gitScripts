@@ -1,0 +1,40 @@
+#!/usr/bin/python
+
+import sys
+import os
+
+argumentList = sys.argv
+output = os.popen('git branch -vv').readlines()
+newDict = {}
+
+def check_match():
+    newDictSet = set(newDict.values())
+    if "*" + argumentList[1] in newDictSet or " " + argumentList[1] in newDictSet:
+        os.system("git checkout " + argumentList[1])
+    else:
+	print("there was no match")
+
+def checkout():
+    listKeys = newDict.keys()
+    listKeys.sort()
+    for key in listKeys:
+        print(str(key) + ":" + newDict.get(key))
+	if key == len(newDict):
+	    print("\n")
+    userInput = int(raw_input("Which branch do you want to checkout? "))
+    branchToCheckout = newDict.get(userInput)
+    os.system("git checkout " + branchToCheckout[1:])   
+
+for idx, val in enumerate(output):
+    splitted = val.split()
+    if splitted[0] == '*':
+	newDict.update({ idx + 1:splitted[0] + splitted[1] })
+    else:
+	newDict.update({ idx + 1:" " + splitted[0] })
+
+if len(argumentList) > 2:
+    print("There are too many arguments")
+elif len(argumentList) == 2:
+    check_match()
+else:
+    checkout()
