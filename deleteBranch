@@ -27,9 +27,25 @@ def delete():
     userInput = raw_input("Which branch/branches do you want to delete? ")
     branchesToDelete = userInput.split()
 
-    for val in branchesToDelete:
-        branchToDelete = newDict.get(int(val))
-        os.system("git branch -D " + branchToDelete[1:])   
+    intList = []
+    isCorrectFormat = True
+    for num in branchesToDelete:
+        try:
+            parsedInt = int(num)
+	    intList.append(parsedInt)
+	except ValueError:
+	    isCorrectFormat = False 
+    if isCorrectFormat == False:
+        print("\nPlease enter only numbers, separated by space")
+	delete()
+    else:
+        for val in intList:
+            branchToDelete = newDict.get(val)
+	    if branchToDelete is not None:
+                os.system("git branch -D " + branchToDelete[1:])   
+	    else:
+		print("\nThere were no branch with that index")
+		delete()
 
 def create_map():
     for idx, val in enumerate(output):
