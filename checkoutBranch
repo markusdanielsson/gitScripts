@@ -3,16 +3,18 @@
 import sys
 import os
 
-argumentList = sys.argv
-output = os.popen('git branch -vv').readlines()
+argumentList = sys.argv[1:]
+output = os.popen("git branch -vv").readlines()
 newDict = {}
 
 def check_match():
     newDictSet = set(newDict.values())
-    if "*" + argumentList[1] in newDictSet or " " + argumentList[1] in newDictSet:
-        os.system("git checkout " + argumentList[1])
+    arg = argumentList[0]
+    if "*" + arg in newDictSet or " " + arg in newDictSet:
+        os.system("git checkout " + arg)
     else:
-	print("there was no match")
+	print("No match was found\n")
+        checkout()
 
 def checkout():
     listKeys = newDict.keys()
@@ -21,20 +23,29 @@ def checkout():
         print(str(key) + ":" + newDict.get(key))
 	if key == len(newDict):
 	    print("\n")
-    userInput = int(raw_input("Which branch do you want to checkout? "))
-    branchToCheckout = newDict.get(userInput)
-    os.system("git checkout " + branchToCheckout[1:])   
 
-for idx, val in enumerate(output):
-    splitted = val.split()
-    if splitted[0] == '*':
-	newDict.update({ idx + 1:splitted[0] + splitted[1] })
+    userInput = raw_input("Which branch do you want to checkout? ")
+
+    branchToCheckout = newDict.get(int(userInput))
+    if branchToCheckout is not None:
+        os.system("git checkout " + branchToCheckout)
     else:
-	newDict.update({ idx + 1:" " + splitted[0] })
+	print("This branch does not exist\n")
+	checkout()
 
-if len(argumentList) > 2:
-    print("There are too many arguments")
-elif len(argumentList) == 2:
+def create_map():
+    for idx, val in enumerate(output):
+        splitted = val.split()
+        if splitted[0] == "*":
+	    newDict.update({ idx + 1:splitted[0] + splitted[1] })
+        else:
+	    newDict.update({ idx + 1:" " + splitted[0] })
+
+create_map()
+
+if len(argumentList) > 1:
+    print("There are way too many arguments. You cannot use more than one argument")
+elif len(argumentList) == 1:
     check_match()
 else:
     checkout()

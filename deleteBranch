@@ -4,14 +4,17 @@ import sys
 import os
 
 argumentList = sys.argv[1:]
-output = os.popen('git branch -vv').readlines()
+output = os.popen("git branch -vv").readlines()
 newDict = {}
 
 def check_match():
     newDictSet = set(newDict.values())
-    for val in argumentList:
-        if "*" + val in newDictSet or " " + val in newDictSet:
-            os.system("git branch -D " + val)
+    arg = argumentList[0] 
+    if "*" + arg in newDictSet or " " + arg in newDictSet:
+        os.system("git branch -D " + arg)
+    else:
+	print("There is no branch with that name\n")
+	delete()
 
 def delete():
     listKeys = newDict.keys()
@@ -31,14 +34,16 @@ def delete():
 def create_map():
     for idx, val in enumerate(output):
         splitted = val.split()
-        if splitted[0] == '*':
+        if splitted[0] == "*":
 	    newDict.update({ idx + 1:splitted[0] + splitted[1] })
         else:
 	    newDict.update({ idx + 1:" " + splitted[0] })
 
 create_map()
 
-if len(argumentList) > 0:
+if len(argumentList) > 1:
+    print("There are way too arguments. You cannot use more than one argument")
+elif len(argumentList) == 1 :
     check_match()
 else:
     delete()
