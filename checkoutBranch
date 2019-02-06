@@ -13,12 +13,13 @@ def check_match():
     if "*" + arg in newDictSet or " " + arg in newDictSet:
         os.system("git checkout " + arg)
     else:
-	print("No match was found\n")
+	print("\nNo match was found")
         checkout()
 
 def checkout():
     listKeys = newDict.keys()
     listKeys.sort()
+    print("\n")
     for key in listKeys:
         print(str(key) + ":" + newDict.get(key))
 	if key == len(newDict):
@@ -44,7 +45,8 @@ def create_map():
 create_map()
 
 if len(argumentList) > 1:
-    print("There are way too many arguments. You cannot use more than one argument")
+    print("\nThere are way too many arguments. You cannot use more than one argument!!!!")
+    checkout()
 elif len(argumentList) == 1:
     check_match()
 else:
